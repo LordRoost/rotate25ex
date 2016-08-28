@@ -49,7 +49,7 @@ public class rotate25 extends ApplicationAdapter {
 	}
 
 	@Override
-	public void render () {
+	public void render () throws OutOfFieldException{
 		int k = 0;
 		Gdx.gl.glClearColor(0, 0, 0.2f, 1); //blue bg
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -64,16 +64,25 @@ public class rotate25 extends ApplicationAdapter {
 		}
 		batch.end();
 
-		NEED TO MAKE SO USER CANT CLICK OUT OF BOUNDS
 		if(Gdx.input.isTouched()) { //if clicked or touched
 			Vector3 touchPos = new Vector3(); //new 3d vector
 			touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
 			camera.unproject(touchPos); //convert vector into camera coordinates
 
 			//JOptionPane.showMessageDialog(null,touchPos.y,"Coordinates",JOptionPane.PLAIN_MESSAGE);
+			if(touchPos.x < 160 || touchPos.x > 640){
+				System.out.println("Oh hi dere");
+			}
+			else{
+				int tempx, tempy;
+				tempx = convertX(touchPos.x);
+				tempy = convertY(touchPos.y);
+				if(tempx == 0 || tempx == 4 || tempy == 0 || tempy == 4){
+					System.out.println("Oh hi dere");
+				}
+			}
+			//JOptionPane.showMessageDialog(null,tiles[convertX(touchPos.x)][convertY(touchPos.y)].getValue(),"Coordinates",JOptionPane.PLAIN_MESSAGE);
 
-			JOptionPane.showMessageDialog(null,tiles[convertX(touchPos.x)][convertY(touchPos.y)].getValue(),"Coordinates",JOptionPane.PLAIN_MESSAGE);
-			//bucket.x = touchPos.x - 64 / 2;
 		}
 
 	}
