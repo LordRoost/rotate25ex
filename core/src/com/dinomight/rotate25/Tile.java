@@ -10,11 +10,13 @@ public class Tile {
     private Texture pic;
     private int xCoord;
     private int yCoord;
-    private int gdxYCoord;
+    private int gdxYCoord; //because gdx (0,0) is bottom left while android(0,0) is top left
     private int height;
     private int width;
     private int value;
-    boolean clicked;
+    private int xGrid;
+    private int yGrid;
+
 
     public void setxCoord(int x){
         this.xCoord = x;
@@ -42,6 +44,14 @@ public class Tile {
 
     public void setPic(Texture pic){
         this.pic = pic;
+    }
+
+    public void setxGrid(int x){
+        this.xGrid = x;
+    }
+
+    public void setyGrid(int y){
+        this.yGrid = y;
     }
 
     public int getxCoord(){
@@ -72,27 +82,33 @@ public class Tile {
         return this.pic;
     }
 
-    public void swap(Tile target){
-        int tempX,tempY;
-        tempX = this.xCoord;
-        tempY = this.yCoord;
-        this.xCoord = target.xCoord;
-        this.yCoord = target.yCoord;
-        target.xCoord = tempX;
-        target.yCoord = tempY;
+    public int getxGrid(){
+        return this.xGrid;
     }
 
-    public int isClicked(float x, float y){
-        if(x > this.xCoord & x < this.xCoord + this.width & y > this.yCoord & y < this.yCoord + this.height)
-        {
-            clicked = true;
-            return this.value;
-        }
-        else
-        {
-            clicked = false;
-            return -1;
-        }
+    public int getyGrid(){
+        return this.yGrid;
     }
+
+    public void takeCoords(Tile target){
+        this.xCoord = target.xCoord;
+        this.yCoord = target.gdxYCoord;
+        this.yCoord = target.yCoord;
+        this.xGrid = target.xGrid;
+        this.yGrid = target.yGrid;
+    }
+
+
+    /*public int convertX(float x){
+        int iValue;
+        iValue = (((int)x-160)/rotate25.SQUAREDIM);
+        return iValue;
+    }
+
+    public int convertY(float y){
+        int jValue;
+        jValue = Math.abs((int)(y/rotate25.SQUAREDIM)-4);
+        return jValue;
+    }*/
 
 }
