@@ -29,18 +29,18 @@ public class rotate25 extends ApplicationAdapter implements ApplicationListener,
 			squares[i] = new Texture(Gdx.files.internal(i+1+".png"));
 
 		int k = 0;
-		for(int i = 0; i < 5; i++) {
-			for(int j = 0; j < 5; j++){
-				tiles[j][i] = new Tile();
-				tiles[j][i].setxCoord(160 + i*SQUAREDIM);
-				tiles[j][i].setGdxYCoord(Math.abs(j-4)*SQUAREDIM);
-				tiles[j][i].setyCoord(j*SQUAREDIM);
-				tiles[j][i].setWidth(SQUAREDIM);
-				tiles[j][i].setHeight(SQUAREDIM);
-				tiles[j][i].setValue(k);
-				tiles[j][i].setPic(squares[k]);
-				tiles[j][i].setxGrid(j);
-				tiles[j][i].setyGrid(i);
+		for(int j = 0; j < 5; j++) {
+			for(int i = 0; i < 5; i++){
+				tiles[i][j] = new Tile();
+				tiles[i][j].setxCoord(160 + i*SQUAREDIM);
+				tiles[i][j].setGdxYCoord(Math.abs(j-4)*SQUAREDIM);
+				tiles[i][j].setyCoord(j*SQUAREDIM);
+				tiles[i][j].setWidth(SQUAREDIM);
+				tiles[i][j].setHeight(SQUAREDIM);
+				tiles[i][j].setValue(k);
+				tiles[i][j].setPic(squares[k]);
+				tiles[i][j].setxGrid(j);
+				tiles[i][j].setyGrid(i);
 				k++;
 			}
 
@@ -51,6 +51,13 @@ public class rotate25 extends ApplicationAdapter implements ApplicationListener,
 		batch = new SpriteBatch();
 		Gdx.input.setInputProcessor(this);
 
+		for(int j = 0; j < 5; j++) {
+			for (int i = 0; i < 5; i++) {
+				System.out.println(tiles[i][j].getValue());
+
+			}
+		}
+
 	}
 
 	@Override
@@ -60,9 +67,9 @@ public class rotate25 extends ApplicationAdapter implements ApplicationListener,
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		for(int i = 0; i < 5; i++) {
-			for (int j = 0; j < 5; j++) {
-				batch.draw(tiles[i][j].getPic(), tiles[j][i].getxCoord(), tiles[j][i].getGdxYCoord());
+		for(int j = 0; j < 5; j++) {
+			for (int i = 0; i < 5; i++) {
+				batch.draw(tiles[i][j].getPic(), tiles[i][j].getxCoord(), tiles[i][j].getGdxYCoord());
 
 			}
 		}
@@ -159,6 +166,29 @@ public class rotate25 extends ApplicationAdapter implements ApplicationListener,
 		Vector3 touchPos = new Vector3(); //new 3d vector
 		touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
 		camera.unproject(touchPos); //convert vector into camera coordinates
+
+		if(touchPos.x < 160 || touchPos.x > 640){ //if out of game field
+			System.out.println("Oh hi dere");
+		}
+		else{
+			int tempx, tempy;
+			tempx = convertX(touchPos.x);
+			tempy = convertY(touchPos.y);
+			if(tempx == 0 || tempx == 4 || tempy == 0 || tempy == 4){ //if click border squares
+				System.out.println("Oh hi dere");
+			}
+			else{
+				System.out.println("hi");
+
+				rotateLeft(tiles[tempx][tempy]);
+				for(int i = 0; i < 5; i++) {
+					for (int j = 0; j < 5; j++) {
+						System.out.println(tiles[i][j].getxCoord());
+
+					}
+				}
+			}
+		}
 		return true;
 	}
 
