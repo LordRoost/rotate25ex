@@ -2,11 +2,13 @@ package com.dinomight.rotate25;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
@@ -15,11 +17,12 @@ import java.util.Random;
 
 import javax.swing.JOptionPane;
 
-public class rotate25 extends ApplicationAdapter implements ApplicationListener, InputProcessor{
+public class rotate25 extends Game implements ApplicationListener, InputProcessor{
 
 	private Texture[] squares = new Texture[25];
 	private OrthographicCamera camera;
 	private SpriteBatch batch;
+	public BitmapFont font;
 	public static final int SQUAREDIM = 96;
 	private Tile[][] tiles = new Tile[5][5];
 
@@ -50,6 +53,8 @@ public class rotate25 extends ApplicationAdapter implements ApplicationListener,
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 800, 480);
 		batch = new SpriteBatch();
+		font = new BitmapFont();
+		this.setScreen(new MainMenuScreen(this));
 		Gdx.input.setInputProcessor(this);
 
 		shuffle();
@@ -57,6 +62,7 @@ public class rotate25 extends ApplicationAdapter implements ApplicationListener,
 
 	@Override
 	public void render () throws OutOfFieldException{
+		super.render();
 		Gdx.gl.glClearColor(0, 0, 0.2f, 1); //blue bg
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		camera.update();
@@ -78,6 +84,8 @@ public class rotate25 extends ApplicationAdapter implements ApplicationListener,
 			squares[i].dispose();
 
 		}
+		font.dispose();
+		batch.dispose();
 	}
 
 	public int convertX(float x){
