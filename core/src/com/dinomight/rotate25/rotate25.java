@@ -11,6 +11,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 
+import java.util.Random;
+
 import javax.swing.JOptionPane;
 
 public class rotate25 extends ApplicationAdapter implements ApplicationListener, InputProcessor{
@@ -50,12 +52,7 @@ public class rotate25 extends ApplicationAdapter implements ApplicationListener,
 		batch = new SpriteBatch();
 		Gdx.input.setInputProcessor(this);
 
-	/*
-		for(int j = 0; j < 5; j++) {
-			for (int i = 0; i < 5; i++) {
-				System.out.println("(" + tiles[i][j].getxGrid()+ ","+tiles[i][j].getyGrid()+")");
-			}
-		}*/
+		shuffle();
 	}
 
 	@Override
@@ -72,7 +69,6 @@ public class rotate25 extends ApplicationAdapter implements ApplicationListener,
 			}
 		}
 		batch.end();
-
 
 	}
 	
@@ -100,40 +96,36 @@ public class rotate25 extends ApplicationAdapter implements ApplicationListener,
 		int centerX, centerY;
 		centerX = center.getxGrid();
 		centerY = center.getyGrid();
+
 		Tile tempTile = new Tile();
-		Tile OGTile = new Tile();
-		OGTile.equals(tiles[centerX-1][centerY-1]);
-		tempTile.equals(tiles[centerX][centerY-1]);
+		Tile OGTile = tempTile.clone(tiles[centerX-1][centerY-1]);
 
-		tiles[centerX-1][centerY-1].equals(tiles[centerX][centerY-1]); //topleft taking topcenter
-		tiles[centerX-1][centerY-1].takeCoords(OGTile);
+		tiles[centerX-1][centerY-1].copy(tiles[centerX][centerY-1]); //topleft taking topcenter
+		tiles[centerX][centerY-1].copy(tiles[centerX+1][centerY-1]); //topcenter taking topright
+		tiles[centerX+1][centerY-1].copy(tiles[centerX+1][centerY]); //topright taking centerright
+		tiles[centerX+1][centerY].copy(tiles[centerX+1][centerY+1]); //centerright taking bottomright
+		tiles[centerX+1][centerY+1].copy(tiles[centerX][centerY+1]); //bottomright taking bottomcenter
+		tiles[centerX][centerY+1].copy(tiles[centerX-1][centerY+1]); //bottomcenter taking bottomleft
+		tiles[centerX-1][centerY+1].copy(tiles[centerX-1][centerY]); //bottomleft taking centerleft
+		tiles[centerX-1][centerY].copy(OGTile); //centerleft taking topleft
+	}
 
-		tiles[centerX][centerY-1].equals(tiles[centerX+1][centerY-1]); //topcenter taking topright
-		tiles[centerX][centerY-1].takeCoords(tempTile);
-		tempTile = tiles[centerX+1][centerY-1];
+	public void rotateRight(Tile center){
+		int centerX, centerY;
+		centerX = center.getxGrid();
+		centerY = center.getyGrid();
 
-		tiles[centerX+1][centerY-1].equals(tiles[centerX+1][centerY]); //topright taking centerright
-		tiles[centerX+1][centerY-1].takeCoords(tempTile);
-		tempTile = tiles[centerX+1][centerY];
+		Tile tempTile = new Tile();
+		Tile OGTile = tempTile.clone(tiles[centerX-1][centerY-1]);
 
-		tiles[centerX+1][centerY].equals(tiles[centerX+1][centerY+1]); //centerright taking bottomright
-		tiles[centerX+1][centerY].takeCoords(tempTile);
-		tempTile = tiles[centerX+1][centerY+1];
-
-		tiles[centerX+1][centerY+1].equals(tiles[centerX][centerY+1]); //bottomright taking bottomcenter
-		tiles[centerX+1][centerY+1].takeCoords(tempTile);
-		tempTile = tiles[centerX][centerY+1];
-
-		tiles[centerX][centerY+1].equals(tiles[centerX-1][centerY+1]); //bottomcenter taking bottomleft
-		tiles[centerX][centerY+1].takeCoords(tempTile);
-		tempTile = tiles[centerX-1][centerY+1];
-
-		tiles[centerX-1][centerY+1].equals(tiles[centerX-1][centerY]); //bottomleft taking centerleft
-		tiles[centerX-1][centerY+1].takeCoords(tempTile);
-		tempTile = tiles[centerX-1][centerY];
-
-		tiles[centerX-1][centerY].equals(OGTile); //centerleft taking topleft
-		tiles[centerX-1][centerY].takeCoords(tempTile);
+		tiles[centerX-1][centerY-1].copy(tiles[centerX-1][centerY]); //topleft taking centerleft
+		tiles[centerX-1][centerY].copy(tiles[centerX-1][centerY+1]); //centerleft taking bottomleft
+		tiles[centerX-1][centerY+1].copy(tiles[centerX][centerY+1]); //bottomleft taking bottomcenter
+		tiles[centerX][centerY+1].copy(tiles[centerX+1][centerY+1]); //bottomcenter taking bottomright
+		tiles[centerX+1][centerY+1].copy(tiles[centerX+1][centerY]); //bottomright taking centerright
+		tiles[centerX+1][centerY].copy(tiles[centerX+1][centerY-1]); //centerright taking topright
+		tiles[centerX+1][centerY-1].copy(tiles[centerX][centerY-1]); //topright taking topcenter
+		tiles[centerX][centerY-1].copy(OGTile); //topcenter taking topleft
 	}
 
 	@Override
@@ -154,18 +146,58 @@ public class rotate25 extends ApplicationAdapter implements ApplicationListener,
 				System.out.println("Oh hi dere");
 			}
 			else{
-
-				rotateLeft(tiles[tempx][tempy]);
-
-				for(int j = 0; j < 5; j++) {
-					for (int i = 0; i < 5; i++) {
-						System.out.println("(" + tiles[i][j].getxGrid()+ ","+tiles[i][j].getyGrid()+")" + tiles[i][j].getValue());
-						//System.out.println(tiles[i][j].getPic());
-					}
-				}
+				rotateRight(tiles[tempx][tempy]);
+				//errorCheck();
 			}
 		}
+		if(checkWin())
+			JOptionPane.showMessageDialog(null,"YOU WON!","YAY",JOptionPane.PLAIN_MESSAGE);
 		return false;
+	}
+
+	public void shuffle(){
+		for(int i = 0; i < 2; i++) {
+			int random = (int)(Math.random()*9);
+			switch (random){
+				case 0: rotateLeft(tiles[1][1]);
+					break;
+				case 1: rotateLeft(tiles[2][1]);
+					break;
+				case 2: rotateLeft(tiles[3][1]);
+					break;
+				case 3: rotateLeft(tiles[2][1]);
+					break;
+				case 4: rotateLeft(tiles[2][2]);
+					break;
+				case 5: rotateLeft(tiles[2][3]);
+					break;
+				case 6: rotateLeft(tiles[3][1]);
+					break;
+				case 7: rotateLeft(tiles[3][2]);
+					break;
+				case 8: rotateLeft(tiles[3][3]);
+					break;
+			}
+		}
+	}
+
+	public boolean checkWin(){
+		for(int j = 0; j < 5; j++) {
+			for (int i = 0; i < 5; i++) {
+				if(tiles[i][j].getValue() != j*5+i)
+					return false;
+			}
+		}
+		return true;
+	}
+
+	public void errorCheck(){
+		for(int j = 0; j < 5; j++) {
+			for (int i = 0; i < 5; i++) {
+				System.out.println("(" + tiles[i][j].getxGrid()+ ","+tiles[i][j].getyGrid()+")" + tiles[i][j].getValue());
+				System.out.println(tiles[i][j].getPic());
+			}
+		}
 	}
 
 	@Override

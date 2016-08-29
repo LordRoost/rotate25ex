@@ -17,6 +17,17 @@ public class Tile {
     private int xGrid;
     private int yGrid;
 
+    public Tile(){
+        this.width = 0;
+        this.height = 0;
+        this.xCoord = 0;
+        this.yCoord = 0;
+        this.xGrid = 0;
+        this.yGrid = 0;
+        this.value = 0;
+        this.gdxYCoord = 0;
+        this.pic = null;
+    }
 
     public void setxCoord(int x){
         this.xCoord = x;
@@ -103,17 +114,19 @@ public class Tile {
         this.value = target.value;
     }
 
+    public Tile clone(Tile target){
+        Tile myClone = new Tile();
 
-    /*public int convertX(float x){
-        int iValue;
-        iValue = (((int)x-160)/rotate25.SQUAREDIM);
-        return iValue;
+        myClone.pic = target.pic;
+        myClone.value = target.value;
+        myClone.xCoord = target.xCoord;
+        myClone.yCoord = target.yCoord;
+        myClone.gdxYCoord = target.gdxYCoord;
+        myClone.xGrid = target.xGrid;
+        myClone.yGrid = target.yGrid;
+        myClone.height = target.height;
+        myClone.width = target.width;
+        return myClone;
     }
-
-    public int convertY(float y){
-        int jValue;
-        jValue = Math.abs((int)(y/rotate25.SQUAREDIM)-4);
-        return jValue;
-    }*/
 
 }
