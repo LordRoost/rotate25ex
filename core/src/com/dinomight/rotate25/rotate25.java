@@ -18,7 +18,6 @@ public class rotate25 extends ApplicationAdapter implements ApplicationListener,
 	private Texture[] squares = new Texture[25];
 	private OrthographicCamera camera;
 	private SpriteBatch batch;
-	//private Rectangle[][] tiles = new Rectangle[5][5];
 	public static final int SQUAREDIM = 96;
 	private Tile[][] tiles = new Tile[5][5];
 
@@ -39,8 +38,8 @@ public class rotate25 extends ApplicationAdapter implements ApplicationListener,
 				tiles[i][j].setHeight(SQUAREDIM);
 				tiles[i][j].setValue(k);
 				tiles[i][j].setPic(squares[k]);
-				tiles[i][j].setxGrid(j);
-				tiles[i][j].setyGrid(i);
+				tiles[i][j].setxGrid(i);
+				tiles[i][j].setyGrid(j);
 				k++;
 			}
 
@@ -51,13 +50,12 @@ public class rotate25 extends ApplicationAdapter implements ApplicationListener,
 		batch = new SpriteBatch();
 		Gdx.input.setInputProcessor(this);
 
+	/*
 		for(int j = 0; j < 5; j++) {
 			for (int i = 0; i < 5; i++) {
-				System.out.println(tiles[i][j].getValue());
-
+				System.out.println("(" + tiles[i][j].getxGrid()+ ","+tiles[i][j].getyGrid()+")");
 			}
-		}
-
+		}*/
 	}
 
 	@Override
@@ -75,37 +73,6 @@ public class rotate25 extends ApplicationAdapter implements ApplicationListener,
 		}
 		batch.end();
 
-		/*
-		if(Gdx.input.isTouched()) { //if clicked or touched
-			Vector3 touchPos = new Vector3(); //new 3d vector
-			touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-			camera.unproject(touchPos); //convert vector into camera coordinates
-			//JOptionPane.showMessageDialog(null,tiles[convertX(touchPos.x)][convertY(touchPos.y)].getyGrid(),"Coordinates",JOptionPane.PLAIN_MESSAGE);
-			//JOptionPane.showMessageDialog(null,touchPos.y,"Coordinates",JOptionPane.PLAIN_MESSAGE);
-			if(touchPos.x < 160 || touchPos.x > 640){ //if out of game field
-				System.out.println("Oh hi dere");
-			}
-			else{
-				int tempx, tempy;
-				tempx = convertX(touchPos.x);
-				tempy = convertY(touchPos.y);
-				if(tempx == 0 || tempx == 4 || tempy == 0 || tempy == 4){ //if click border squares
-					System.out.println("Oh hi dere");
-				}
-				else{
-					System.out.println("hi");
-
-					rotateLeft(tiles[tempx][tempy]);
-					for(int i = 0; i < 5; i++) {
-						for (int j = 0; j < 5; j++) {
-							System.out.println(tiles[j][i].getyGrid());
-
-						}
-					}
-				}
-			}
-
-		}*/
 
 	}
 	
@@ -131,33 +98,42 @@ public class rotate25 extends ApplicationAdapter implements ApplicationListener,
 
 	public void rotateLeft(Tile center){
 		int centerX, centerY;
-		int tempX, tempY, tempGdxY, tempXGrid, tempYGrid;
-		Tile tempTile;
 		centerX = center.getxGrid();
 		centerY = center.getyGrid();
+		Tile tempTile = new Tile();
+		Tile OGTile = new Tile();
+		OGTile.equals(tiles[centerX-1][centerY-1]);
+		tempTile.equals(tiles[centerX][centerY-1]);
 
-		tempTile = tiles[centerX-1][centerY-1];
+		tiles[centerX-1][centerY-1].equals(tiles[centerX][centerY-1]); //topleft taking topcenter
+		tiles[centerX-1][centerY-1].takeCoords(OGTile);
 
-		tempX = tiles[centerX-1][centerY-1].getxCoord();
-		tempY = tiles[centerX-1][centerY-1].getyCoord();
-		tempGdxY = tiles[centerX-1][centerY-1].getGdxYCoord();
-		tempXGrid = tiles[centerX-1][centerY-1].getxGrid();
-		tempYGrid = tiles[centerX-1][centerY-1].getyGrid();
+		tiles[centerX][centerY-1].equals(tiles[centerX+1][centerY-1]); //topcenter taking topright
+		tiles[centerX][centerY-1].takeCoords(tempTile);
+		tempTile = tiles[centerX+1][centerY-1];
 
-		tiles[centerX-1][centerY-1].takeCoords(tiles[centerX-1][centerY]); //topleft takes centerleft
-		tiles[centerX-1][centerY].takeCoords(tiles[centerX-1][centerY+1]); //centerleft takes bottomleft
-		tiles[centerX-1][centerY+1].takeCoords(tiles[centerX][centerY+1]); //bottomleft takes bottomcenter
-		tiles[centerX][centerY+1].takeCoords(tiles[centerX+1][centerY+1]); //bottomcenter takes bottomright
-		tiles[centerX+1][centerY+1].takeCoords(tiles[centerX+1][centerY]); //bottomright takes centerright
-		tiles[centerX+1][centerY].takeCoords(tiles[centerX+1][centerY-1]); //centerright takes topright
-		tiles[centerX+1][centerY-1].takeCoords(tiles[centerX][centerY-1]); //topright takes topcenter
-		tiles[centerX][centerY-1].setxCoord(tempX);//topcenter takes topleft's Xcoord
-		tiles[centerX][centerY-1].setyCoord(tempY);//topcenter takes topleft's Ycoord
-		tiles[centerX][centerY-1].setGdxYCoord(tempGdxY);//topcenter takes topleft's gdxYcoord
-		tiles[centerX][centerY-1].setxGrid(tempXGrid);
-		tiles[centerX][centerY-1].setyGrid(tempYGrid);
+		tiles[centerX+1][centerY-1].equals(tiles[centerX+1][centerY]); //topright taking centerright
+		tiles[centerX+1][centerY-1].takeCoords(tempTile);
+		tempTile = tiles[centerX+1][centerY];
 
+		tiles[centerX+1][centerY].equals(tiles[centerX+1][centerY+1]); //centerright taking bottomright
+		tiles[centerX+1][centerY].takeCoords(tempTile);
+		tempTile = tiles[centerX+1][centerY+1];
 
+		tiles[centerX+1][centerY+1].equals(tiles[centerX][centerY+1]); //bottomright taking bottomcenter
+		tiles[centerX+1][centerY+1].takeCoords(tempTile);
+		tempTile = tiles[centerX][centerY+1];
+
+		tiles[centerX][centerY+1].equals(tiles[centerX-1][centerY+1]); //bottomcenter taking bottomleft
+		tiles[centerX][centerY+1].takeCoords(tempTile);
+		tempTile = tiles[centerX-1][centerY+1];
+
+		tiles[centerX-1][centerY+1].equals(tiles[centerX-1][centerY]); //bottomleft taking centerleft
+		tiles[centerX-1][centerY+1].takeCoords(tempTile);
+		tempTile = tiles[centerX-1][centerY];
+
+		tiles[centerX-1][centerY].equals(OGTile); //centerleft taking topleft
+		tiles[centerX-1][centerY].takeCoords(tempTile);
 	}
 
 	@Override
@@ -178,18 +154,18 @@ public class rotate25 extends ApplicationAdapter implements ApplicationListener,
 				System.out.println("Oh hi dere");
 			}
 			else{
-				System.out.println("hi");
 
 				rotateLeft(tiles[tempx][tempy]);
-				for(int i = 0; i < 5; i++) {
-					for (int j = 0; j < 5; j++) {
-						System.out.println(tiles[i][j].getxCoord());
 
+				for(int j = 0; j < 5; j++) {
+					for (int i = 0; i < 5; i++) {
+						System.out.println("(" + tiles[i][j].getxGrid()+ ","+tiles[i][j].getyGrid()+")" + tiles[i][j].getValue());
+						//System.out.println(tiles[i][j].getPic());
 					}
 				}
 			}
 		}
-		return true;
+		return false;
 	}
 
 	@Override

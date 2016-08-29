@@ -92,10 +92,15 @@ public class Tile {
 
     public void takeCoords(Tile target){
         this.xCoord = target.xCoord;
-        this.yCoord = target.gdxYCoord;
+        this.gdxYCoord = target.gdxYCoord;
         this.yCoord = target.yCoord;
         this.xGrid = target.xGrid;
         this.yGrid = target.yGrid;
+    }
+
+    public void copy(Tile target){
+        this.pic = target.pic;
+        this.value = target.value;
     }
 
 
