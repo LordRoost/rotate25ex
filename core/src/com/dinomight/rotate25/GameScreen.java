@@ -1,6 +1,8 @@
 package com.dinomight.rotate25;
 
+import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -14,19 +16,18 @@ import javax.swing.JOptionPane;
 /**
  * Created by Jacqueline on 2016-08-30.
  */
-public class GameScreen implements Screen {
+public class GameScreen implements Screen, InputProcessor{
 
     final rotate25 game;
 
     private Texture[] squares = new Texture[25];
     private OrthographicCamera camera;
-    private SpriteBatch batch;
-    public BitmapFont font;
     public static final int SQUAREDIM = 96;
     private Tile[][] tiles = new Tile[5][5];
 
-    @Override
-    public void create () {
+    public GameScreen(final rotate25 game){
+        this.game = game;
+
 
         for(int i = 0; i < 25; i++)
             squares[i] = new Texture(Gdx.files.internal(i+1+".png"));
@@ -51,29 +52,25 @@ public class GameScreen implements Screen {
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 480);
-        batch = new SpriteBatch();
-        font = new BitmapFont();
-        this.setScreen(new MainMenuScreen(this));
         Gdx.input.setInputProcessor(this);
 
         shuffle();
     }
 
     @Override
-    public void render (){
-        super.render();
+    public void render (float delta){
         Gdx.gl.glClearColor(0, 0, 0.2f, 1); //blue bg
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         camera.update();
-        batch.setProjectionMatrix(camera.combined);
-        batch.begin();
+        game.batch.setProjectionMatrix(camera.combined);
+        game.batch.begin();
         for(int j = 0; j < 5; j++) {
             for (int i = 0; i < 5; i++) {
-                batch.draw(tiles[i][j].getPic(), tiles[i][j].getxCoord(), tiles[i][j].getGdxYCoord());
+                game.batch.draw(tiles[i][j].getPic(), tiles[i][j].getxCoord(), tiles[i][j].getGdxYCoord());
 
             }
         }
-        batch.end();
+        game.batch.end();
 
     }
 
@@ -83,8 +80,6 @@ public class GameScreen implements Screen {
             squares[i].dispose();
 
         }
-        font.dispose();
-        batch.dispose();
     }
 
     public int convertX(float x){
@@ -241,4 +236,14 @@ public class GameScreen implements Screen {
     public boolean scrolled(int amount) {
         return false;
     }
+
+    public void hide(){}
+
+    public void show(){}
+
+    public void pause(){}
+
+    public void resume(){}
+
+    public void resize(int x, int y){}
 }
