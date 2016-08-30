@@ -21,7 +21,7 @@ public class rotate25 extends Game implements ApplicationListener, InputProcesso
 
 	private Texture[] squares = new Texture[25];
 	private OrthographicCamera camera;
-	private SpriteBatch batch;
+	public SpriteBatch batch;
 	public BitmapFont font;
 	public static final int SQUAREDIM = 96;
 	private Tile[][] tiles = new Tile[5][5];
@@ -61,12 +61,14 @@ public class rotate25 extends Game implements ApplicationListener, InputProcesso
 	}
 
 	@Override
-	public void render () throws OutOfFieldException{
+	public void render (){
 		super.render();
 		Gdx.gl.glClearColor(0, 0, 0.2f, 1); //blue bg
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
+
 		batch.begin();
 		for(int j = 0; j < 5; j++) {
 			for (int i = 0; i < 5; i++) {
